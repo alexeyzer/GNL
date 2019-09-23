@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
 #include "libft/libft.h"
+#include <stdio.h>
 
 char	*ft_strdups(const char *s1)
 {
@@ -62,25 +62,45 @@ int		crstr(char **line, char *bufer, int status)
 		if (bufer[status] == '\n' || status == 0)
 		{
 			if (!(*line = ft_strdups(bufer)))
-			return (0);
+			return (-1);
 		}
 		else if (!(*line = ft_strdup(bufer)))
-			return (0);
+			return (-1);
 	}
 	else
 	{
 		if (bufer[status] == '\n' || status == 0)
 		{
 			if (!((*line) = ft_strjoins(ft_strdup(*line),bufer)))
-				return (0);
+				return (-1);
 		}
 		else
 		{ 
 			if (!((*line) = ft_strjoin(ft_strdup(*line),bufer)))
-				return (0);
+				return (-1);
 		}
 	}
 	return (1);
+}
+
+int		buf_check(char *bufer, int status, char **line, int fd)
+{
+	int	i;
+
+	i = 0;
+	while (bufer[i] != '\n')
+		i++;
+		
+	if (bufer[i] == '\n')
+			return (crstr(line, bufer, status));
+		else if	(status <= BUFF_SIZE)
+		{
+			if(crstr(line, bufer, status))
+				return (get_next_line(fd, line));
+			else
+				return (-1);
+		}	
+
 }
 
 int		get_next_line(const int fd, char **line)
@@ -88,26 +108,18 @@ int		get_next_line(const int fd, char **line)
 	char	Bufer[BUFF_SIZE];
 	int		status;
 
-	if (fd < 0 || line == NULL)
-		return (-1);
+	if (fd < 0)
+		return (0);
 	status = 0;
 	while ((status = read(fd, Bufer, BUFF_SIZE)))
 	{
+		printf("%c", Bufer[status - 1]);
+		printf("%d",status);
 		if (status < 0)
 			return (-1);
-		if (status == 0 || Bufer[status] == '\n')
-		{
-			if(crstr(line, Bufer, status))
-				return (1);
-		}
-		else if	(status <= BUFF_SIZE)
-		{
-			if(crstr(line, Bufer, status))
-			{
-				if(get_next_line(fd, line))
-					return (1);
-			}
-		}	
+		if (status == 0)
+			return (crstr(line, Bufer, status));
+		
 	}
 	return (0);
 }
