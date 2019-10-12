@@ -6,24 +6,23 @@
 /*   By: alexzudin <alexzudin@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/23 08:10:16 by alexzudin         #+#    #+#             */
-/*   Updated: 2019/10/08 14:29:36 by alexzudin        ###   ########.fr       */
+/*   Updated: 2019/10/12 10:23:35 by aguiller         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include "libft/libft.h"
 
-int     makeline(char **line, char **longm, int fd, char *memcpy)
+int	makeline(char **line, char **longm, int fd, char *memcpy)
 {
 	int i;
 
 	i = 0;
-	while(longm[fd][i] != '\n' && longm[fd][i] != '\0')
+	while (longm[fd][i] != '\n' && longm[fd][i] != '\0')
 		i++;
 	if (longm[fd][i] == '\n')
 	{
 		*line = ft_strsub(longm[fd], 0, i);
-		if(longm[fd][i + 1] != '\0')
+		if (longm[fd][i + 1] != '\0')
 		{
 			memcpy = ft_strdup(longm[fd] + i + 1);
 			free(longm[fd]);
@@ -42,46 +41,46 @@ int     makeline(char **line, char **longm, int fd, char *memcpy)
 	return (1);
 }
 
-int     reading(char **longm, int fd)
+int	reading(char **longm, int fd)
 {
-    char		bufer[BUFF_SIZE + 1];
-    int         status;
-    char 		*mem;
-    int         i;
+	char	bufer[BUFF_SIZE + 1];
+	int		status;
+	char	*mem;
+	int		i;
 
 	mem = NULL;
-    while ((status = read(fd, bufer, BUFF_SIZE)) > 0)
-    {
-        i = status;
-        while (i < BUFF_SIZE + 1)
-            bufer[i++] = '\0';
-        if (longm[fd] == NULL)
-            longm[fd] = ft_strnew(0);
-        mem = ft_strjoin(longm[fd], bufer);
-        free(longm[fd]);
-        longm[fd] = mem;
+	while ((status = read(fd, bufer, BUFF_SIZE)) > 0)
+	{
+		i = status;
+		while (i < BUFF_SIZE + 1)
+			bufer[i++] = '\0';
+		if (longm[fd] == NULL)
+			longm[fd] = ft_strnew(0);
+		mem = ft_strjoin(longm[fd], bufer);
+		free(longm[fd]);
+		longm[fd] = mem;
 		mem = NULL;
-        if (ft_strchr(longm[fd], '\n'))
-            break;
-    }
-    return (status);
+		if (ft_strchr(longm[fd], '\n'))
+			break ;
+	}
+	return (status);
 }
 
-int		get_next_line(const int fd, char **line)
+int	get_next_line(const int fd, char **line)
 {
 	static char	*longmem[400];
 	int			status;
-    char        *memcpy;
-    int         r;
+	char		*memcpy;
+	int			r;
 
-    memcpy = NULL;
+	memcpy = NULL;
 	if (fd < 0 || line == NULL)
 		return (-1);
 	status = reading(longmem, fd);
-    if (status < 0)
-        return (-1);
+	if (status < 0)
+		return (-1);
 	if (status == 0 && longmem[fd] == NULL)
-	    return (0);
+		return (0);
 	r = makeline(line, longmem, fd, memcpy);
 	ft_strdel(&memcpy);
 	return (r);
