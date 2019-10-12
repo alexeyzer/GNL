@@ -6,13 +6,13 @@
 /*   By: alexzudin <alexzudin@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/23 08:10:16 by alexzudin         #+#    #+#             */
-/*   Updated: 2019/10/12 10:23:35 by aguiller         ###   ########.fr       */
+/*   Updated: 2019/10/12 13:03:15 by aguiller         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	makeline(char **line, char **longm, int fd, char *memcpy)
+int	makeline(char **line, char **longm, int fd, char **memcpy)
 {
 	int i;
 
@@ -24,9 +24,9 @@ int	makeline(char **line, char **longm, int fd, char *memcpy)
 		*line = ft_strsub(longm[fd], 0, i);
 		if (longm[fd][i + 1] != '\0')
 		{
-			memcpy = ft_strdup(longm[fd] + i + 1);
+			*memcpy = ft_strdup(longm[fd] + i + 1);
 			free(longm[fd]);
-			longm[fd] = ft_strdup(memcpy);
+			longm[fd] = ft_strdup(*memcpy);
 		}
 		else
 			ft_strdel(&(longm[fd]));
@@ -52,7 +52,7 @@ int	reading(char **longm, int fd)
 	while ((status = read(fd, bufer, BUFF_SIZE)) > 0)
 	{
 		i = status;
-		while (i < BUFF_SIZE + 1)
+		while (i < BUFF_SIZE + 2)
 			bufer[i++] = '\0';
 		if (longm[fd] == NULL)
 			longm[fd] = ft_strnew(0);
@@ -81,7 +81,7 @@ int	get_next_line(const int fd, char **line)
 		return (-1);
 	if (status == 0 && longmem[fd] == NULL)
 		return (0);
-	r = makeline(line, longmem, fd, memcpy);
+	r = makeline(line, longmem, fd, &memcpy);
 	ft_strdel(&memcpy);
 	return (r);
 }
