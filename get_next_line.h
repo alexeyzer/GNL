@@ -6,7 +6,7 @@
 /*   By: alexzudin <alexzudin@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/23 08:19:05 by alexzudin         #+#    #+#             */
-/*   Updated: 2019/09/28 16:45:28 by alexzudin        ###   ########.fr       */
+/*   Updated: 2019/10/14 20:53:04 by aguiller         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <sys/types.h>
 # include <sys/uio.h>
 # include "libft/libft.h"
-# define BUFF_SIZE 32
+# define BUFF_SIZE 8
 
 int		get_next_line(const int fd, char **line);
 int		crstr(char **line, char *bufer, int status);

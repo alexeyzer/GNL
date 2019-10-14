@@ -6,15 +6,16 @@
 /*   By: alexzudin <alexzudin@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/23 08:10:16 by alexzudin         #+#    #+#             */
-/*   Updated: 2019/10/12 13:03:15 by aguiller         ###   ########.fr       */
+/*   Updated: 2019/10/14 20:51:34 by aguiller         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	makeline(char **line, char **longm, int fd, char **memcpy)
+int	makeline(char **line, char **longm, int fd, int schitali)
 {
-	int i;
+	int		i;
+	char	*mem;
 
 	i = 0;
 	while (longm[fd][i] != '\n' && longm[fd][i] != '\0')
@@ -22,18 +23,15 @@ int	makeline(char **line, char **longm, int fd, char **memcpy)
 	if (longm[fd][i] == '\n')
 	{
 		*line = ft_strsub(longm[fd], 0, i);
-		if (longm[fd][i + 1] != '\0')
-		{
-			*memcpy = ft_strdup(longm[fd] + i + 1);
-			free(longm[fd]);
-			longm[fd] = ft_strdup(*memcpy);
-		}
-		else
+		mem = ft_strdup(longm[fd] + i + 1);
+		free(longm[fd]);
+		longm[fd] = mem;
+		if (longm[fd][0] == '\0')
 			ft_strdel(&(longm[fd]));
 	}
 	else
 	{
-		if (i == BUFF_SIZE)
+		if (schitali == BUFF_SIZE)
 			return (get_next_line(fd, line));
 		*line = ft_strsub(longm[fd], 0, i);
 		ft_strdel(&(longm[fd]));
@@ -52,7 +50,7 @@ int	reading(char **longm, int fd)
 	while ((status = read(fd, bufer, BUFF_SIZE)) > 0)
 	{
 		i = status;
-		while (i < BUFF_SIZE + 2)
+		while (i < BUFF_SIZE + 1)
 			bufer[i++] = '\0';
 		if (longm[fd] == NULL)
 			longm[fd] = ft_strnew(0);
@@ -70,10 +68,8 @@ int	get_next_line(const int fd, char **line)
 {
 	static char	*longmem[400];
 	int			status;
-	char		*memcpy;
 	int			r;
 
-	memcpy = NULL;
 	if (fd < 0 || line == NULL)
 		return (-1);
 	status = reading(longmem, fd);
@@ -81,7 +77,6 @@ int	get_next_line(const int fd, char **line)
 		return (-1);
 	if (status == 0 && longmem[fd] == NULL)
 		return (0);
-	r = makeline(line, longmem, fd, &memcpy);
-	ft_strdel(&memcpy);
+	r = makeline(line, longmem, fd, status);
 	return (r);
 }
